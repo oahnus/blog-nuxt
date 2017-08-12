@@ -8,7 +8,7 @@
         <el-row class="main-container">
           <!--main content-->
           <el-col :span="18" style="padding: 5px">
-            <div class="article-list">
+            <div class="article-list" v-if="!isNotFound">
               <el-card class="box-card"
                        :body-style="{padding: '20px'}"
                        v-for="article in articles"
@@ -18,6 +18,12 @@
                 </el-row>
               </el-card>
               <load-more-button></load-more-button>
+            </div>
+            <div :span="18" v-if="isNotFound">
+              <el-card class="box-card">
+                <div class="not-found-text">内容未找到</div>
+                <img src="../../../assets/icon/not-found.jpg" class="not-found-img"/>
+              </el-card>
             </div>
           </el-col>
 
@@ -91,6 +97,15 @@
               limit: store.state.option.articleNumPerPage
             })
           ])
+        case 'keyword':
+          let keyword = paths[paths.length - 1]
+          return Promise.all([
+            store.dispatch('loadArticlesByKeyword', {
+              keyword: keyword,
+              page: 1,
+              limit: store.state.option.articleNumPerPage
+            })
+          ])
         default:
           return Promise.all([
             store.dispatch('clearArticles')
@@ -103,6 +118,9 @@
     computed: {
       articles () {
         return this.$store.state.article.articles.data
+      },
+      isNotFound () {
+        return this.$store.state.article.articles.data.length === 0
       }
     },
     watch: {
@@ -136,6 +154,16 @@
               limit: vm.$store.state.option.articleNumPerPage
             })
             break
+          case 'keyword':
+            let keyword = paths[paths.length - 1]
+
+            return Promise.all([
+              vm.$store.dispatch('loadArticlesByKeyword', {
+                keyword: keyword,
+                page: 1,
+                limit: vm.$store.state.option.articleNumPerPage
+              })
+            ])
           default:
             vm.$store.dispatch('clearArticles')
             break
@@ -163,5 +191,20 @@
     /*position: relative;*/
     margin-top: 60px;
     margin-bottom: 60px;
+  }
+  .not-found-img {
+    margin-left: auto;
+    margin-right: auto;
+    width: 40%;
+    display: block;
+    margin-top: 20px;
+  }
+  .not-found-text {
+    /*margin-left: auto;*/
+    /*margin-right: auto;*/
+    text-align: center;
+    /*font-size: 30px;*/
+    font: 20px/1.5 arial;
+    letter-spacing: 10px;
   }
 </style>

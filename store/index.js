@@ -2,6 +2,7 @@
  * Created by hasee on 2017/8/3.
  */
 import Api from '../plugins/axios'
+import axios from 'axios'
 
 export const actions = {
   // 全局服务初始化
@@ -60,6 +61,23 @@ export const actions = {
     }, error => {
       console.log('[ERROR]', error)
       commit('article/GET_ARTICLE_DETAIL_FAILURE', error)
+    })
+  },
+
+  loadArticlesByKeyword ({ commit }, params = {}) {
+    commit('article/REQUEST_ARTICLES')
+    return Api.get('/v1/article/search', {params}).then(resp => {
+      const success = !!resp.status && resp.data && Object.is(resp.data.errcode, 0)
+      if (success) {
+        let isFirstPage = params.page && params.page === 1
+        let commitName = 'article/' + (isFirstPage ? 'GET' : 'ADD') + '_ARTICLES_SUCCESS'
+        commit(commitName, {data: resp.data.data.articles, page: params.page, totalPage: resp.data.data.totalPage})
+      } else {
+        commit('article/GET_ARTICLES_FAILURE')
+      }
+    }, error => {
+      console.log('[ERROR]', error)
+      commit('article/GET_ARTICLES_FAILURE', error)
     })
   },
 
@@ -153,6 +171,15 @@ export const actions = {
     }, error => {
       console.log(error)
       commit('article/GET_HOT_ARTICLES_FAILURE', error)
+    })
+  },
+
+  loadGithubUser ({ commit }) {
+    commit('github/REQUEST_GITHUB_DATA')
+    return axios.get('https://api.github.com/users/oahnus').then(resp => {
+      commit('github/GET_USER_SUCCESS', resp.data)
+    }, () => {
+      commit('github/GET_USER_FAILURE')
     })
   }
 }

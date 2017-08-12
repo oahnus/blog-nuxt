@@ -3,7 +3,7 @@
     <div class="container">
       <div class="footer-content">
         <!--<a class="sitemap-btn" href="/sitemap.xml" target="_blank">SITEMAP</a>-->
-        <span>Oahnus</span>
+        <a href="https://github.com/oahnus/blog-nuxt">GitHub</a>
         <span> - </span>
         <span>Powered By </span>
         <a href="https://vuejs.org/">Vue.js</a>

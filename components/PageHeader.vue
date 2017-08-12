@@ -12,6 +12,7 @@
               placeholder="搜索"
               icon="search"
               v-model="searchInput"
+              @keyup.enter.native="search"
               :on-icon-click="search">
             </el-input>
           </el-menu-item>
@@ -25,8 +26,7 @@
   export default {
     data () {
       return {
-//        activeIndex: 'oahnus',
-        searchInput: '搜索'
+        searchInput: ''
       }
     },
     methods: {
@@ -46,7 +46,11 @@
       },
       search () {
         let vm = this
-        console.log(vm.searchInput)
+        if (vm.searchInput.length > 20) {
+          vm.$message.warning('关键字不能超过20个字符')
+          return false
+        }
+        vm.$router.push({path: '/articles/keyword/' + vm.searchInput})
       }
     }
   }
