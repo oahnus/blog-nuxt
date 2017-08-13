@@ -181,5 +181,14 @@ export const actions = {
     }, () => {
       commit('github/GET_USER_FAILURE')
     })
+  },
+
+  loadGithubRepositories ({ commit }) {
+    commit('github/REQUEST_GITHUB_DATA')
+    return axios.get('https://api.github.com/users/oahnus/repos').then(resp => {
+      commit('github/GET_REPOSITORIES_SUCCESS', resp.data)
+    }, () => {
+      commit('github/GET_REPOSITORIES_FAILURE')
+    })
   }
 }
