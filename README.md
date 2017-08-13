@@ -1,6 +1,6 @@
 # blog-nuxt
 
-> Nuxt.js project
+> 个人博客页(Via Nuxt.js)
 
 ## Build Setup
 
@@ -20,3 +20,7 @@ $ npm run generate
 ```
 
 For detailed explanation on how things work, checkout the [Nuxt.js docs](https://github.com/nuxt/nuxt.js).
+
+## Todo List
+
+- [ ] 配置本地json数据源, 以便于演示。 
