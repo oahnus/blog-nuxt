@@ -4,6 +4,8 @@
 import Api from '../plugins/axios'
 import axios from 'axios'
 
+// let jsonBase = 'http://localhost:3000/json/'
+
 export const actions = {
   // 全局服务初始化
   nuxtServerInit (store, { params, route, isServer, req }) {
@@ -51,6 +53,7 @@ export const actions = {
 
   loadArticleDetail ({ commit }, params = {}) {
     commit('article/REQUEST_ARTICLE_DETAIL')
+    // return axios.get(jsonBase + '/v1/article/' + params.articleId + '.json').then(resp => {
     return Api.get('/v1/article/' + params.articleId).then(resp => {
       const success = !!resp.status && resp.data && Object.is(resp.data.errcode, 0)
       if (success) {
@@ -100,6 +103,7 @@ export const actions = {
 
   loadArticlesByArchive ({ commit }, params = {}) {
     commit('article/REQUEST_ARTICLES')
+    // return axios.get(jsonBase + '/v1/article/archive/' + params.archive + '.json', {params}).then(resp => {
     return Api.get('/v1/article/archive/' + params.archive, {params}).then(resp => {
       const success = !!resp.status && resp.data && Object.is(resp.data.errcode, 0)
       if (success) {
@@ -120,8 +124,8 @@ export const actions = {
   // 获取标签
   loadTags ({ commit }, params = { per_page: 160 }) {
     commit('tag/REQUEST_TAGS')
+    // return axios.get(jsonBase + '/v1/tag.json').then(resp => {
     return Api.get('/v1/tag').then(resp => {
-      // const success = !!resp.status && resp.data
       const success = !!resp.status && resp.data && Object.is(resp.data.errcode, 0)
       if (success) commit('tag/GET_TAGS_SUCCESS', resp.data.data)
       if (!success) commit('tag/GET_TAGS_FAILURE')
@@ -133,6 +137,7 @@ export const actions = {
 
   loadArticles ({ commit }, params = {}) {
     commit('article/REQUEST_ARTICLES')
+    // return axios.get(jsonBase + '/v1/articles.json').then(resp => {
     return Api.get('/v1/article', {params}).then(resp => {
       const success = !!resp.status && resp.data && Object.is(resp.data.errcode, 0)
       if (success) {
@@ -151,6 +156,7 @@ export const actions = {
   // 获取归档时间
   loadArchives ({ commit }) {
     commit('archive/REQUEST_ARCHIVES')
+    // return axios.get(jsonBase + '/v1/article/archive.json').then(resp => {
     return Api.get('/v1/article/archive').then(resp => {
       const success = !!resp.status && resp.data && Object.is(resp.data.errcode, 0)
       if (success) commit('archive/GET_ARCHIVES_SUCCESS', resp.data.data)
@@ -164,6 +170,7 @@ export const actions = {
   // 获取热门文章
   loadHotArticles ({ commit }) {
     commit('article/REQUEST_HOT_ARTICLES')
+    // return axios.get(jsonBase + '/v1/article/hot.json').then(resp => {
     return Api.get('/v1/article/hot').then(resp => {
       const success = !!resp.status && resp.data && Object.is(resp.data.errcode, 0)
       if (success) commit('article/GET_HOT_ARTICLES_SUCCESS', resp.data.data)
@@ -189,6 +196,52 @@ export const actions = {
       commit('github/GET_REPOSITORIES_SUCCESS', resp.data)
     }, () => {
       commit('github/GET_REPOSITORIES_FAILURE')
+    })
+  },
+
+  userLogin ({ commit }, user = {}) {
+    commit('auth/REQUEST_AUTH')
+    return new Promise((resolve, reject) => {
+      return Api.post('/v1/auth/login', user).then(resp => {
+        const success = !!resp.status && resp.data && Object.is(resp.data.errcode, 0)
+        if (success) {
+          commit('auth/USER_LOGIN_SUCCESS', resp.data)
+          resolve()
+        } else {
+          commit('auth/USER_LOGIN_FAILURE')
+          reject(resp.data.msg)
+        }
+      }, (error) => {
+        commit('auth/USER_LOGIN_FAILURE')
+        reject(error)
+      })
+    })
+  },
+
+  loadUserFromStorage ({ commit }) {
+    let user = JSON.parse(window.localStorage.getItem('user'))
+    let token = JSON.parse(window.localStorage.getItem('token'))
+    console.log(token)
+    console.log(user)
+    if (!user && !token) {
+      let time = new Date(window.localStorage.getItem('time'))
+      if (new Date().getTime() - time.getTime() > 86400000) {
+        commit('auth/USER_LOGIN_FAILURE')
+      } else {
+        console.log('ccccc')
+        commit('auth/USER_LOGIN_SUCCESS', {data: {user: user, token: token}})
+      }
+    }
+  },
+
+  userRegister ({ commit }, user = {}) {
+    commit('auth/REQUEST_AUTH')
+    return Api.post('/v1/auth/register', {user}).then(resp => {
+      const success = !!resp.status && resp.data && Object.is(resp.data.errcode, 0)
+      if (success) commit('user/USER_LOGIN_SUCCESS', resp.data)
+      else commit('auth/USER_LOGIN_FAILURE')
+    }, () => {
+      commit('auth/USER_LOGIN_FAILURE')
     })
   }
 }
