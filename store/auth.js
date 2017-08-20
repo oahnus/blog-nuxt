@@ -29,7 +29,12 @@ export const mutations = {
   },
 
   USER_LOGIN_FAILURE (state) {
-    state.user.fetching = false
+    state.auth.fetching = false
+    state.auth.isLogin = false
+  },
+
+  USER_LOGOUT (state) {
+    state.auth.fetching = false
     state.auth.isLogin = false
   }
 }

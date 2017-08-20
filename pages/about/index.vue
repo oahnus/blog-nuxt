@@ -145,7 +145,7 @@
     box-shadow: 1px 1px 5px #888888;
   }
   .repository-card:hover {
-    background: #bbb;
+    background: #ccc;
   }
 
   .repository-card .lang-img {

@@ -44,13 +44,35 @@
         <div class="user-description">
           {{user.description}}
         </div>
-        <div style="margin-top: 5px;margin-left: auto;margin-right: auto;display: block;width: 70px">
-          <span style="font-size: 14px;margin-right: 10px">金币</span>
-          <img src="../assets/icon/gold.png" style="width: 12px">12
-        </div>
+        <!--<div style="margin-top: 5px;margin-left: auto;margin-right: auto;display: block;width: 70px">-->
+          <!--<span style="font-size: 14px;margin-right: 10px">金币</span>-->
+          <!--<img src="../assets/icon/gold.png" style="width: 12px">12-->
+        <!--</div>-->
       </el-row>
     </el-card>
-
+    <!-- 一言 -->
+    <el-card class="box-card" :body-style="{padding: '20px'}">
+      <div slot="header" class="clearfix">
+        <span style="line-height: 20px;">Hitokoto</span>
+      </div>
+      <el-row :gutter="20">
+        <div class="hitokoto-text">
+          {{hitokoto.hitokoto}}
+        </div>
+      </el-row>
+      <el-row style="justify-content: flex-end;display: flex">
+        <div class="hitokoto-text">
+          ----{{hitokoto.from}}
+        </div>
+      </el-row>
+      <el-row>
+        <el-progress :percentage="percentage"
+                     :stroke-width="3"
+                     :show-text="false"
+                     class="progress-bar">
+        </el-progress>
+      </el-row>
+    </el-card>
     <!-- 标签 -->
     <el-card class="box-card" :body-style="{padding: '20px'}">
       <div slot="header" class="clearfix">
@@ -89,16 +111,18 @@
   export default {
     fetch ({ store }) {
       return Promise.all([
-        store.dispatch('loadUserFromStorage')
+        store.dispatch('loadUserFromStorage'),
+        store.dispatch('loadHitokoto')
       ])
     },
     data () {
       return {
         articles: [],
-        email: '478606127@qq.com',
-        password: '123456',
+        email: '',
+        password: '',
         password2: '',
-        isRegister: false
+        isRegister: false,
+        percentage: 0
       }
     },
     computed: {
@@ -113,11 +137,27 @@
       },
       archives () {
         return this.$store.state.archive.data
+      },
+      hitokoto () {
+        return this.$store.state.hitokoto.hitokoto.data
       }
     },
     methods: {
       canUseDOM () {
         return !!(typeof window !== 'undefined' && window.document && window.document.createElement)
+      },
+      countDown () {
+        let vm = this
+        setTimeout(() => {
+          if (vm.percentage === 100) {
+            vm.$store.dispatch('loadHitokoto')
+            vm.percentage = 0
+            vm.countDown()
+          } else {
+            vm.percentage = vm.percentage + 0.5
+            vm.countDown()
+          }
+        }, 125)
       },
       chooseTag (tagId) {
         let vm = this
@@ -139,20 +179,41 @@
         })
       },
       logout () {
-        let vm = this
-        vm.isLogin = false
-        if (vm.canUseDOM()) {
-          window.localStorage.clear()
+        this.$store.dispatch('userLogout')
+      }
+    },
+    mounted () {
+      let vm = this
+      if (vm.canUseDOM()) {
+        let user = JSON.parse(window.localStorage.getItem('user'))
+        let token = JSON.parse(window.localStorage.getItem('token'))
+        if (user && token) {
+          let time = new Date(window.localStorage.getItem('time'))
+          if (new Date().getTime() - time.getTime() > 86400000) {
+            vm.$store.dispatch('userLogout')
+          } else {
+            vm.$store.dispatch('loadUserFromStorage', {data: {user: user, token: token}})
+          }
         }
       }
     },
     created () {
-
+      let vm = this
+      vm.$store.dispatch('loadHitokoto')
+      vm.countDown()
     }
   }
 </script>
 
 <style scoped>
+  .hitokoto-text {
+    font-size: 14px;
+    color: #666;
+    margin: 0 10px 10px 10px;
+  }
+  .progress-bar {
+    margin-top: 5px;
+  }
   .tag {
     margin-left: 10px;
     margin-top: 10px;

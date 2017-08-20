@@ -199,6 +199,30 @@ export const actions = {
     })
   },
 
+  loadHitokoto ({ commit }) {
+    commit('hitokoto/REQUEST_HITOKOTO')
+    return axios.get('https://sslapi.hitokoto.cn/').then(resp => {
+      commit('hitokoto/REQUEST_HITOKOTO_SUCCESS', resp.data)
+    }, () => {
+      commit('hitokoto/REQUEST_HITOKOTO_FAILURE')
+    })
+  },
+
+  submitComment ({ commit }, form = {}) {
+    return new Promise((resolve, reject) => {
+      return Api.post('/v1/comment', form).then(resp => {
+        const success = !!resp.status && resp.data && Object.is(resp.data.errcode, 0)
+        if (success) {
+          resolve(resp.data)
+        } else {
+          reject(resp.data.msg)
+        }
+      }, (error) => {
+        reject(error)
+      })
+    })
+  },
+
   userLogin ({ commit }, user = {}) {
     commit('auth/REQUEST_AUTH')
     return new Promise((resolve, reject) => {
@@ -218,20 +242,13 @@ export const actions = {
     })
   },
 
-  loadUserFromStorage ({ commit }) {
-    let user = JSON.parse(window.localStorage.getItem('user'))
-    let token = JSON.parse(window.localStorage.getItem('token'))
-    console.log(token)
-    console.log(user)
-    if (!user && !token) {
-      let time = new Date(window.localStorage.getItem('time'))
-      if (new Date().getTime() - time.getTime() > 86400000) {
-        commit('auth/USER_LOGIN_FAILURE')
-      } else {
-        console.log('ccccc')
-        commit('auth/USER_LOGIN_SUCCESS', {data: {user: user, token: token}})
-      }
-    }
+  loadUserFromStorage ({ commit }, params = {}) {
+    commit('auth/USER_LOGIN_SUCCESS', params)
+  },
+
+  userLogout ({ commit }) {
+    commit('auth/USER_LOGOUT')
+    window.localStorage.clear()
   },
 
   userRegister ({ commit }, user = {}) {

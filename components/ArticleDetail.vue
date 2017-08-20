@@ -44,66 +44,72 @@
       </el-card>
       <div class="back-top"><a :href="'#top'" style="text-decoration: none">Top</a></div>
 
-      <!-- review -->
-      <!--<el-card class="box-card comment-input" :body-style="{padding: '20px'}">-->
-      <!--<div class="label">评论 (共{{article.statistics.commentNum}}条)</div>-->
-      <!--<el-row>-->
-      <!--<el-col :span="1">-->
-      <!--<img class="avatar" :src="userAvatar">-->
-      <!--</el-col>-->
-      <!--<el-col :span="16" :offset="2">-->
-      <!--<el-input-->
-      <!--size="large"-->
-      <!--placeholder="请输入内容"-->
-      <!--v-model="review">-->
-      <!--</el-input>-->
-      <!--</el-col>-->
-      <!--<el-col :span="4">-->
-      <!--<el-button type="primary" size="large" @click="commitComment">提  交</el-button>-->
-      <!--</el-col>-->
-      <!--</el-row>-->
-      <!--</el-card>-->
+       <!-- comment -->
+      <el-card class="box-card comment-input" :body-style="{padding: '20px'}">
+        <div class="label">评论 (共{{article.statistics.commentNum}}条)</div>
+        <el-row>
+          <el-col :span="1">
+            <img class="avatar" :src="userAvatar">
+          </el-col>
+          <el-col :span="16" :offset="2">
+            <el-input
+              size="large"
+              placeholder="请输入内容"
+              v-model="comment">
+            </el-input>
+          </el-col>
+          <el-col :span="4">
+            <el-button type="primary" size="large" @click="commitComment">提  交</el-button>
+          </el-col>
+        </el-row>
+      </el-card>
 
-      <!--<el-card class="box-card comment-list" :body-style="{padding: '20px'}" v-if="article.comments.length > 0">-->
-      <!--<div class="label">最新评论</div>-->
-      <!--<hr style="border-color: red;"/>-->
-      <!--<div v-for="(comment, index) in article.comments">-->
-      <!--<el-row>-->
-      <!--<el-col :span="1">-->
-      <!--<img class="avatar" :src="comment.fromUser.avatar" style="margin-top: 5px">-->
-      <!--</el-col>-->
-      <!--<el-col :span="20" :offset="2">-->
-      <!--<el-row :gutter="10" class="comment-header">-->
-      <!--<div style="float: left;color: red;font-size: 18px;cursor: pointer">-->
-      <!--{{comment.fromUser.nickname}}-->
-      <!--</div>-->
-      <!--<div style="float: right;color: #bbb">{{ commentTimeFormat(comment.createTime) }}</div>-->
-      <!--</el-row>-->
-      <!--<el-row :gutter="20" style="margin-top: 10px;font-size: 16px">-->
-      <!--<div>{{comment.content}}</div>-->
-      <!--</el-row>-->
-      <!--<el-row>-->
-      <!--<el-col :offset="16" class="comment-footer">-->
-      <!--<span>赞同({{comment.approval}})</span>-->
-      <!--<span>反对({{comment.against}})</span>-->
-      <!--<span>回复</span>-->
-      <!--<span v-if="comment.fromUser.id === currentUser.id"-->
-      <!--style="color: red" @click="deleteComment(comment.id)">删除</span>-->
-      <!--</el-col>-->
-      <!--</el-row>-->
-      <!--</el-col>-->
-      <!--</el-row>-->
-      <!--<hr/>-->
-      <!--</div>-->
-      <!--</el-card>-->
+      <el-card class="box-card comment-list" :body-style="{padding: '20px'}" v-if="article.comments.length > 0">
+        <div class="label">最新评论</div>
+          <hr style="border-color: red;"/>
+            <div v-for="(comment, index) in article.comments">
+            <el-row>
+              <el-col :span="1">
+                <img class="avatar" :src="comment.fromUser.avatar" style="margin-top: 5px">
+              </el-col>
+              <el-col :span="20" :offset="2">
+                <el-row :gutter="10" class="comment-header">
+                  <div style="float: left;color: red;font-size: 18px;cursor: pointer">
+                    {{comment.fromUser.nickname}}
+                  </div>
+                <div style="float: right;color: #bbb">{{ commentTimeFormat(comment.createTime) }}</div>
+              </el-row>
+              <el-row :gutter="20" style="margin-top: 10px;font-size: 16px">
+                <div>{{comment.content}}</div>
+              </el-row>
+              <el-row>
+                <el-col :offset="16" class="comment-footer">
+                  <span>赞同({{comment.approval}})</span>
+                  <span>反对({{comment.against}})</span>
+                  <span>回复</span>
+                  <span v-if="comment.fromUser.id === currentUser.id"
+                    style="color: red" @click="deleteComment(comment.id)">删除</span>
+                  </el-col>
+                </el-row>
+              </el-col>
+            </el-row>
+          <hr/>
+        </div>
+      </el-card>
     </el-col>
   </section>
 </template>
 
 <script>
   import moment from 'moment'
+  import validate from '../plugins/validate'
 
   export default {
+    data () {
+      return {
+        comment: ''
+      }
+    },
     props: {
       article: {}
     },
@@ -116,65 +122,70 @@
         } else {
           return ''
         }
+      },
+      userAvatar () {
+        let user = null
+        if (this.canUseDOM()) {
+          user = JSON.parse(window.localStorage.getItem('user'))
+        }
+        if (user) {
+          return user.avatar
+        } else {
+          return '/static/image/avatar/default.jpg'
+        }
+      },
+      currentUser () {
+        let user = JSON.parse(window.localStorage.getItem('user'))
+        if (user) {
+          return user
+        } else {
+          return {}
+        }
       }
-//      userAvatar () {
-//        let user = JSON.parse(window.localStorage.getItem('user'))
-//        if (user) {
-//          return user.avatar
-//        } else {
-//          return '/static/image/avatar/default.jpg'
-//        }
-//      },
-//      currentUser () {
-//        let user = JSON.parse(window.localStorage.getItem('user'))
-//        if (user) {
-//          return user
-//        } else {
-//          return {}
-//        }
-//      }
     },
     methods: {
+      canUseDOM () {
+        return !!(typeof window !== 'undefined' && window.document && window.document.createElement)
+      },
       commitComment () {
-//        console.log('button', 'click')
-//        let vm = this
-//        let user = JSON.parse(window.localStorage.getItem('user'))
-//
-//        if (!user) {
-//          vm.$message.warning('请登录后再评论')
-//          return
-//        }
-//
-//        if (validate.isBlank(vm.review)) {
-//          vm.$message.warning('评论内容不能为空')
-//          return false
-//        }
-//        let form = {}
-//        form.articleId = vm.article.id
-//        form.toUserId = vm.article.userId
-//        form.fromUserId = user.id
-//        form.content = vm.review
-//        form.type = 1
-//
-//        console.log('[评论]', form)
-//        commentApi.addComment(form,
-//          body => {
-//            console.log(body)
-//            if (body.errcode === 0) {
-//              form.fromUser = user
-//              form.approval = 0
-//              form.against = 0
-//              vm.article.comments.push(form)
-//              vm.$message.success('评论成功')
-//            } else {
-//              vm.$message.warning(body.msg)
-//            }
-//          },
-//          error => {
-//            console.log('[error]', error)
-//            vm.$message.error(error)
-//          }
-//        )
+        console.log('button', 'click')
+        let vm = this
+        let user = null
+        if (vm.canUseDOM()) {
+          user = JSON.parse(window.localStorage.getItem('user'))
+        }
+        if (!user) {
+          vm.$message.warning('请登录后再评论')
+          return
+        }
+
+        if (validate.isBlank(vm.comment)) {
+          vm.$message.warning('评论内容不能为空')
+          return false
+        }
+        let form = {}
+        form.articleId = vm.article.id
+        form.toUserId = vm.article.userId
+        form.fromUserId = user.id
+        form.content = vm.comment
+        form.type = 1
+
+        console.log('[评论]', form)
+        vm.$store.dispatch('submitComment', form)
+          .then(body => {
+            if (body.errcode === 0) {
+              form.fromUser = user
+              form.approval = 0
+              form.against = 0
+              vm.article.comments.push(form)
+              vm.$message.success('评论成功')
+            } else {
+              vm.$message.warning(body.msg)
+            }
+          }, error => {
+            console.log('[error]', error)
+            vm.$message.error(error)
+          })
       },
       commentTimeFormat (date) {
         return moment(date).format('YYYY-MM-DD HH:mm:ss')
