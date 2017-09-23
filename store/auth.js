@@ -15,7 +15,6 @@ export const state = () => {
 }
 
 export const mutations = {
-  // 文章列表 无参
   [types.REQUEST_AUTH] (state) {
     state.auth.fetching = true
   },

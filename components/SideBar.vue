@@ -1,32 +1,111 @@
+<style>
+  .login-dialog input {
+    border: none;
+    border-radius: 0;
+    border-bottom: 1px solid #0077db;
+    font-size: 14px;
+  }
+
+  .login-dialog div {
+    border: none;
+    color: #0077db;
+    border-radius: 0;
+    /*border-bottom: 1px solid;*/
+  }
+</style>
+
+<style scoped>
+
+  .hitokoto-text {
+    font-size: 14px;
+    color: #666;
+    margin: 0 10px 10px 10px;
+  }
+  .progress-bar {
+    margin-top: 5px;
+  }
+  .tag {
+    margin-left: 10px;
+    margin-top: 10px;
+    font-size: 16px;
+    border-radius: 2px;
+    cursor: pointer;
+    width: 40%;
+  }
+  .side-bar .box-card {
+    margin-bottom: 10px;
+  }
+  .logout {
+    line-height: 20px;
+    float: right;
+    cursor: pointer;
+  }
+  .logout:hover {
+    color: red;
+  }
+  .user-avatar img{
+    width: 100px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    border-radius: 10px;
+    border: 1px solid #eee;
+  }
+  .user-nickname {
+    margin-top: 5px;
+    display: flex;
+    justify-content: center;
+    /*background: red;*/
+    font-size: 18px;
+    cursor: pointer;
+    /*font-weight: 500;*/
+  }
+  .user-nickname:hover {
+    color: red;
+  }
+  .user-description {
+    margin-top: 5px;
+    font-size: 14px;
+    color: #aaa;
+    margin-left: 10%;
+    margin-right: 10%;
+  }
+</style>
+<style>
+  #home > div > div > div.main-container.el-row > div.el-col.el-col-6 > div > div:nth-child(1) > div.el-card__body > div > div > div > div {
+    width: 55px;
+  }
+</style>
+
 <template>
   <div class="side-bar">
     <!-- 登录 -->
-    <el-card class="box-card" :body-style="{padding: '20px'}" v-if="!isLogin">
-      <!-- 登录 注册 -->
-      <div slot="header" class="clearfix">
-        <span style="line-height: 20px;">登录</span>
-        <span style="line-height: 20px;">注册</span>
-      </div>
-      <el-row :gutter="20">
-        <div class="login-dialog">
-          <el-input placeholder="请输入邮箱" v-model="email">
-            <template class="input-label" slot="prepend">  邮    箱    </template>
-          </el-input>
-          <el-input placeholder="请输入密码" type="password" v-model="password">
-            <template slot="prepend">  密    码    </template>
-          </el-input>
-          <el-input placeholder="请重复输入密码" v-if="isRegister" v-model="password2">
-            <template slot="prepend">确认密码</template>
-          </el-input>
-          <el-row type="flex" justify="center" style="margin-top: 15px">
-            <el-button v-if="!isRegister" style="margin-right: 20px" @click="login">登 录</el-button>
-            <el-button v-if="isRegister" style="margin-right: 20px">提 交</el-button>
-            <el-button v-if="isRegister" @click="isRegister = false">取 消</el-button>
-            <el-button v-if="!isRegister" @click="isRegister = true">注 册</el-button>
-          </el-row>
-        </div>
-      </el-row>
-    </el-card>
+    <!--<el-card class="box-card" :body-style="{padding: '20px'}" v-if="!isLogin">-->
+      <!--&lt;!&ndash; 登录 注册 &ndash;&gt;-->
+      <!--<div slot="header" class="clearfix">-->
+        <!--<span style="line-height: 20px;">登录</span>-->
+        <!--<span style="line-height: 20px;">注册</span>-->
+      <!--</div>-->
+      <!--<el-row :gutter="20">-->
+        <!--<div class="login-dialog">-->
+          <!--<el-input placeholder="请输入邮箱" v-model="email">-->
+            <!--<template slot="prepend">  邮&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;箱    </template>-->
+          <!--</el-input>-->
+          <!--<el-input style="margin-bottom: 5px" placeholder="请输入密码" type="password" v-model="password">-->
+            <!--<template slot="prepend">  密&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;码    </template>-->
+          <!--</el-input>-->
+          <!--<el-input placeholder="请重复输入密码" v-if="isRegister" v-model="password2">-->
+            <!--<template slot="prepend">确认密码</template>-->
+          <!--</el-input>-->
+          <!--<el-row type="flex" justify="center" style="margin-top: 15px">-->
+            <!--<el-button v-if="!isRegister" style="margin-right: 20px" @click="login">登 录</el-button>-->
+            <!--<el-button v-if="isRegister" style="margin-right: 20px">提 交</el-button>-->
+            <!--<el-button v-if="isRegister" @click="isRegister = false">取 消</el-button>-->
+            <!--<el-button v-if="!isRegister" @click="isRegister = true">注 册</el-button>-->
+          <!--</el-row>-->
+        <!--</div>-->
+      <!--</el-row>-->
+    <!--</el-card>-->
 
     <!-- 用户信息-->
     <el-card class="box-card" :body-style="{padding: '20px'}" v-if="isLogin">
@@ -122,7 +201,8 @@
         password: '',
         password2: '',
         isRegister: false,
-        percentage: 0
+        percentage: 0,
+        timer: {}
       }
     },
     computed: {
@@ -148,7 +228,7 @@
       },
       countDown () {
         let vm = this
-        setTimeout(() => {
+        vm.timer = setTimeout(() => {
           if (vm.percentage === 100) {
             vm.$store.dispatch('loadHitokoto')
             vm.percentage = 0
@@ -197,6 +277,9 @@
         }
       }
     },
+    beforeDestroy () {
+      clearTimeout(this.timer)
+    },
     created () {
       let vm = this
       vm.$store.dispatch('loadHitokoto')
@@ -204,65 +287,3 @@
     }
   }
 </script>
-
-<style scoped>
-  .hitokoto-text {
-    font-size: 14px;
-    color: #666;
-    margin: 0 10px 10px 10px;
-  }
-  .progress-bar {
-    margin-top: 5px;
-  }
-  .tag {
-    margin-left: 10px;
-    margin-top: 10px;
-    font-size: 16px;
-    border-radius: 2px;
-    cursor: pointer;
-    width: 40%;
-  }
-  .side-bar .box-card {
-    margin-bottom: 10px;
-  }
-  .logout {
-    line-height: 20px;
-    float: right;
-    cursor: pointer;
-  }
-  .logout:hover {
-    color: red;
-  }
-  .user-avatar img{
-    width: 100px;
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-    border-radius: 10px;
-    border: 1px solid #eee;
-  }
-  .user-nickname {
-    margin-top: 5px;
-    display: flex;
-    justify-content: center;
-    /*background: red;*/
-    font-size: 18px;
-    cursor: pointer;
-    /*font-weight: 500;*/
-  }
-  .user-nickname:hover {
-    color: red;
-  }
-  .user-description {
-    margin-top: 5px;
-    font-size: 14px;
-    color: #aaa;
-    margin-left: 10%;
-    margin-right: 10%;
-  }
-</style>
-<style>
-  #home > div > div > div.main-container.el-row > div.el-col.el-col-6 > div > div:nth-child(1) > div.el-card__body > div > div > div > div {
-    width: 55px;
-  }
-</style>

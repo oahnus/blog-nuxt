@@ -202,7 +202,7 @@ export const actions = {
 
   loadHitokoto ({ commit }) {
     commit(`hitokoto/${types.REQUEST_HITOKOTO}`)
-    return axios.get('https://sslapi.hitokoto.cn/').then(resp => {
+    return axios.get(`http://api.hitokoto.cn/?encode=json`).then(resp => {
       commit(`hitokoto/${types.REQUEST_HITOKOTO_SUCCESS}`, resp.data)
     }, () => {
       commit(`hitokoto/${types.REQUEST_HITOKOTO_FAILURE}`)
@@ -225,9 +225,10 @@ export const actions = {
   },
 
   userLogin ({ commit }, user = {}) {
-    commit('auth/REQUEST_AUTH')
+    commit(`auth/${types.REQUEST_AUTH}`)
     return new Promise((resolve, reject) => {
       return Api.post('/v1/auth/login', user).then(resp => {
+        console.log(resp)
         const success = !!resp.status && resp.data && Object.is(resp.data.errcode, 0)
         if (success) {
           commit(`auth/${types.USER_LOGIN_SUCCESS}`, resp.data)
