@@ -10,4 +10,12 @@ const Api = axios.create({
 })
 
 Vue.prototype.$http = axios
+//
+// const Http = {
+//   get: function (url, params, ) {
+//
+//   }
+// }
+//
+
 export default Api

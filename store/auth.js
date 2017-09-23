@@ -1,6 +1,8 @@
 /**
  * Created by hasee on 2017/8/15.
  */
+import * as types from './mutations'
+
 export const state = () => {
   return {
     auth: {
@@ -14,11 +16,11 @@ export const state = () => {
 
 export const mutations = {
   // 文章列表 无参
-  REQUEST_AUTH (state) {
+  [types.REQUEST_AUTH] (state) {
     state.auth.fetching = true
   },
 
-  USER_LOGIN_SUCCESS (state, action) {
+  [types.USER_LOGIN_SUCCESS] (state, action) {
     state.auth.fetching = false
     state.auth.user = action.data.user
     state.auth.token = action.data.token
@@ -28,12 +30,12 @@ export const mutations = {
     window.localStorage.setItem('time', new Date().getTime())
   },
 
-  USER_LOGIN_FAILURE (state) {
+  [types.USER_LOGIN_FAILURE] (state) {
     state.auth.fetching = false
     state.auth.isLogin = false
   },
 
-  USER_LOGOUT (state) {
+  [types.USER_LOGOUT] (state) {
     state.auth.fetching = false
     state.auth.isLogin = false
   }

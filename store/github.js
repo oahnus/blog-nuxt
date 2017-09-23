@@ -1,6 +1,9 @@
 /**
  * Created by hasee on 2017/8/12.
  */
+
+import * as types from './mutations'
+
 export const state = () => {
   return {
     fetching: false,
@@ -11,21 +14,21 @@ export const state = () => {
 }
 
 export const mutations = {
-  REQUEST_GITHUB_DATA (state) {
+  [types.REQUEST_GITHUB_DATA] (state) {
     state.fetching = true
   },
 
-  GET_USER_SUCCESS (state, action) {
+  [types.GET_USER_SUCCESS] (state, action) {
     state.fetching = false
     state.user = action
   },
 
-  GET_USER_FAILURE (state) {
+  [types.GET_USER_FAILURE] (state) {
     state.fetching = false
     state.user = {}
   },
 
-  GET_REPOSITORIES_SUCCESS (state, action) {
+  [types.GET_REPOSITORIES_SUCCESS] (state, action) {
     state.fetching = false
     let repos = []
     for (let i = 0; i < action.length; i = i + 4) {
@@ -42,7 +45,7 @@ export const mutations = {
     state.repositories = repos
   },
 
-  GET_REPOSITORIES_FAILURE (state) {
+  [types.GET_REPOSITORIES_FAILURE] (state) {
     state.fetching = false
     state.repositories = []
   }

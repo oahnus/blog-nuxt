@@ -33,7 +33,7 @@ module.exports = {
   plugins: [
     { src: '~plugins/ElementUI.js', ssr: true},
     { src: '~plugins/moment.js', ssr: false}
-    // { src: '~plugins/axios.js', ssr: false},
+    // { src: '~plugins/Http.js', ssr: false},
   ],
   // axios: {
   //   baseURL: 'http://localhost:10706/blog',

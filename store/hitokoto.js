@@ -1,6 +1,8 @@
 /**
  * Created by hasee on 2017/8/20.
  */
+import * as types from './mutations'
+
 export const state = () => {
   return {
     hitokoto: {
@@ -12,16 +14,16 @@ export const state = () => {
 
 export const mutations = {
   // 文章列表 无参
-  REQUEST_HITOKOTO (state) {
+  [types.REQUEST_HITOKOTO] (state) {
     state.hitokoto.fetching = true
   },
 
-  REQUEST_HITOKOTO_SUCCESS (state, action) {
+  [types.REQUEST_HITOKOTO_SUCCESS] (state, action) {
     state.hitokoto.fetching = false
     state.hitokoto.data = action
   },
 
-  REQUEST_HITOKOTO_FAILURE (state) {
+  [types.REQUEST_HITOKOTO_FAILURE] (state) {
     state.hitokoto.fetching = false
   }
 }
