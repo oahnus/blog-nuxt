@@ -4,10 +4,11 @@
         <el-menu theme="dark" class="nav-bar" mode="horizontal" @select="handleSelect">
           <el-menu-item index="oahnus">Oahnus</el-menu-item>
           <el-menu-item index="home">首页</el-menu-item>
-          <el-menu-item index="技术">技术</el-menu-item>
-          <el-menu-item index="4">随笔</el-menu-item>
-          <el-menu-item index="5">杂记</el-menu-item>
-          <el-menu-item index="6" style="float: right;">
+          <el-menu-item index="tech">技术</el-menu-item>
+          <!--<el-menu-item index="">随笔</el-menu-item>-->
+          <!--<el-menu-item index="">杂记</el-menu-item>-->
+          <el-menu-item index="about">关于</el-menu-item>
+          <el-menu-item index="" style="float: right;">
             <el-input
               placeholder="搜索"
               icon="search"
@@ -32,15 +33,17 @@
     methods: {
       handleSelect (key, keyPath) {
         let vm = this
+        console.log(key)
         switch (key) {
           case 'oahnus':
           case 'home':
             vm.$router.push({path: '/'})
             break
-          case '技术':
+          case 'tech':
             vm.$router.push({path: '/articles/category/1'})
             break
-          case 'Python':
+          case 'about':
+            vm.$router.push({path: '/about'})
             break
         }
       },

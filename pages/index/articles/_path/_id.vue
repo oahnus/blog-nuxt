@@ -1,64 +1,33 @@
 <template>
   <section>
-    <el-row :gutter="20" type="flex" class="row-bg" justify="center">
-      <el-col :span="16" style="min-width: 1366px">
-        <el-row>
-          <page-header></page-header>
+    <div class="article-list" v-if="!isNotFound">
+      <el-card class="box-card"
+               :body-style="{padding: '20px'}"
+               v-for="article in articles"
+               :key="article.id">
+        <el-row :gutter="20">
+          <article-entity :article="article"></article-entity>
         </el-row>
-        <el-row class="main-container">
-          <!--main content-->
-          <el-col :span="18" style="padding: 5px">
-            <div class="article-list" v-if="!isNotFound">
-              <el-card class="box-card"
-                       :body-style="{padding: '20px'}"
-                       v-for="article in articles"
-                       :key="article.id">
-                <el-row :gutter="20">
-                  <article-entity :article="article"></article-entity>
-                </el-row>
-              </el-card>
-              <load-more-button></load-more-button>
-            </div>
-            <div :span="18" v-if="isNotFound">
-              <el-card class="box-card">
-                <div class="not-found-text">内容未找到</div>
-                <img src="../../../assets/icon/not-found.jpg" class="not-found-img"/>
-              </el-card>
-            </div>
-          </el-col>
-
-
-          <!--side bar-->
-          <el-col :span="6" style="padding: 5px">
-            <!--<el-card class="box-card" :body-style="{padding: '20px'}">-->
-            <side-bar></side-bar>
-            <!--</el-card>-->
-          </el-col>
-        </el-row>
-
-
-        <el-row>
-          <page-footer></page-footer>
-        </el-row>
-      </el-col>
-    </el-row>
+      </el-card>
+      <load-more-button></load-more-button>
+    </div>
+    <div v-if="isNotFound">
+      <el-card class="box-card">
+        <div class="not-found-text">内容未找到</div>
+        <img src="~assets/icon/not-found.jpg" class="not-found-img"/>
+      </el-card>
+    </div>
   </section>
 </template>
 
 <script>
-  import PageHeader from '~/components/PageHeader.vue'
-  import SideBar from '~/components/SideBar.vue'
   import ArticleEntity from '~/components/ArticleEntity.vue'
   import LoadMoreButton from '~/components/LoadMoreButton.vue'
-  import PageFooter from '~/components/PageFooter.vue'
 
   export default {
     components: {
-      PageHeader,
-      SideBar,
       ArticleEntity,
-      LoadMoreButton,
-      PageFooter
+      LoadMoreButton
     },
     data () {
       return {
@@ -186,11 +155,6 @@
 <style scoped>
   .article-list .box-card{
     margin-bottom: 10px;
-  }
-  .main-container {
-    /*position: relative;*/
-    margin-top: 60px;
-    margin-bottom: 60px;
   }
   .not-found-img {
     margin-left: auto;

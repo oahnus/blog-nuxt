@@ -1,6 +1,6 @@
 <template>
   <section>
-    <el-col :span="18" style="padding: 5px">
+    <el-col>
       <!-- 面包屑 -->
       <el-card class="box-card" :body-style="{padding: '10px'}">
         <el-breadcrumb separator="/">
