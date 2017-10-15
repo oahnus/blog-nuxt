@@ -31,7 +31,7 @@
     },
     data () {
       return {
-        currentPage: 1
+        currentPage: 0
       }
     },
     fetch ({ store, route }) {
@@ -42,19 +42,19 @@
         case 'category':
           let categoryId = paths[paths.length - 1]
           return Promise.all([
-            store.dispatch('loadArticlesByParams', {
+            store.dispatch('loadArticlesByCategory', {
               categoryId: categoryId,
-              page: 1,
-              limit: store.state.option.articleNumPerPage
+              page: 0,
+              size: store.state.option.articleNumPerPage
             })
           ])
         case 'tag':
           let tagId = paths[paths.length - 1]
           return Promise.all([
-            store.dispatch('loadArticlesByParams', {
+            store.dispatch('loadArticlesByTag', {
               tagId: tagId,
-              page: 1,
-              limit: store.state.option.articleNumPerPage
+              page: 0,
+              size: store.state.option.articleNumPerPage
             })
           ])
         case 'archive':
@@ -62,8 +62,8 @@
           return Promise.all([
             store.dispatch('loadArticlesByArchive', {
               archive: archive,
-              page: 1,
-              limit: store.state.option.articleNumPerPage
+              page: 0,
+              size: store.state.option.articleNumPerPage
             })
           ])
         case 'keyword':
@@ -71,8 +71,8 @@
           return Promise.all([
             store.dispatch('loadArticlesByKeyword', {
               keyword: keyword,
-              page: 1,
-              limit: store.state.option.articleNumPerPage
+              page: 0,
+              size: store.state.option.articleNumPerPage
             })
           ])
         default:
@@ -93,51 +93,51 @@
       }
     },
     watch: {
-      '$route' (to, from) {
-        let vm = this
-        let paths = to.path.split('/')
-
-        let pathName = paths[paths.length - 2]
-        switch (pathName) {
-          case 'category':
-            let categoryId = paths[paths.length - 1]
-            vm.$store.dispatch('loadArticlesByParams', {
-              categoryId: categoryId,
-              page: 1,
-              limit: vm.$store.state.option.articleNumPerPage
-            })
-            break
-          case 'tag':
-            let tagId = paths[paths.length - 1]
-            vm.$store.dispatch('loadArticlesByParams', {
-              tagId: tagId,
-              page: 1,
-              limit: vm.$store.state.option.articleNumPerPage
-            })
-            break
-          case 'archive':
-            let archive = paths[paths.length - 1]
-            vm.$store.dispatch('loadArticlesByArchive', {
-              archive: archive,
-              page: 1,
-              limit: vm.$store.state.option.articleNumPerPage
-            })
-            break
-          case 'keyword':
-            let keyword = paths[paths.length - 1]
-
-            return Promise.all([
-              vm.$store.dispatch('loadArticlesByKeyword', {
-                keyword: keyword,
-                page: 1,
-                limit: vm.$store.state.option.articleNumPerPage
-              })
-            ])
-          default:
-            vm.$store.dispatch('clearArticles')
-            break
-        }
-      }
+//      '$route' (to, from) {
+//        let vm = this
+//        let paths = to.path.split('/')
+//
+//        let pathName = paths[paths.length - 2]
+//        switch (pathName) {
+//          case 'category':
+//            let categoryId = paths[paths.length - 1]
+//            vm.$store.dispatch('loadArticlesByParams', {
+//              categoryId: categoryId,
+//              page: 1,
+//              limit: vm.$store.state.option.articleNumPerPage
+//            })
+//            break
+//          case 'tag':
+//            let tagId = paths[paths.length - 1]
+//            vm.$store.dispatch('loadArticlesByTag', {
+//              tagId: tagId,
+//              page: 1,
+//              limit: vm.$store.state.option.articleNumPerPage
+//            })
+//            break
+//          case 'archive':
+//            let archive = paths[paths.length - 1]
+//            vm.$store.dispatch('loadArticlesByArchive', {
+//              archive: archive,
+//              page: 1,
+//              limit: vm.$store.state.option.articleNumPerPage
+//            })
+//            break
+//          case 'keyword':
+//            let keyword = paths[paths.length - 1]
+//
+//            return Promise.all([
+//              vm.$store.dispatch('loadArticlesByKeyword', {
+//                keyword: keyword,
+//                page: 1,
+//                limit: vm.$store.state.option.articleNumPerPage
+//              })
+//            ])
+//          default:
+//            vm.$store.dispatch('clearArticles')
+//            break
+//        }
+//      }
     },
     methods: {
       canLoadMore () {

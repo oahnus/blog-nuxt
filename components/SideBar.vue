@@ -73,7 +73,7 @@
 </style>
 <style>
   #home > div > div > div.main-container.el-row > div.el-col.el-col-6 > div > div:nth-child(1) > div.el-card__body > div > div > div > div {
-    width: 55px;
+    /*width: 55px;*/
   }
 </style>
 
@@ -163,7 +163,7 @@
                 class="tag"
                 :key="tag.id"
                 @click.native="chooseTag(tag.id)">
-          {{tag.name}}({{tag.articleNum}})
+          {{tag.name}}({{tag.articleAmount}})
         </el-tag>
       </el-row>
     </el-card>
@@ -189,10 +189,10 @@
 
   export default {
     fetch ({ store }) {
-      return Promise.all([
-        store.dispatch('loadUserFromStorage'),
-        store.dispatch('loadHitokoto')
-      ])
+//      return Promise.all([
+//        store.dispatch('loadUserFromStorage'),
+//        store.dispatch('loadHitokoto')
+//      ])
     },
     data () {
       return {
@@ -263,19 +263,19 @@
       }
     },
     mounted () {
-      let vm = this
-      if (vm.canUseDOM()) {
-        let user = JSON.parse(window.localStorage.getItem('user'))
-        let token = JSON.parse(window.localStorage.getItem('token'))
-        if (user && token) {
-          let time = new Date(window.localStorage.getItem('time'))
-          if (new Date().getTime() - time.getTime() > 86400000) {
-            vm.$store.dispatch('userLogout')
-          } else {
-            vm.$store.dispatch('loadUserFromStorage', {data: {user: user, token: token}})
-          }
-        }
-      }
+//      let vm = this
+//      if (vm.canUseDOM()) {
+//        let user = JSON.parse(window.localStorage.getItem('user'))
+//        let token = JSON.parse(window.localStorage.getItem('token'))
+//        if (user && token) {
+//          let time = new Date(window.localStorage.getItem('time'))
+//          if (new Date().getTime() - time.getTime() > 86400000) {
+//            vm.$store.dispatch('userLogout')
+//          } else {
+//            vm.$store.dispatch('loadUserFromStorage', {data: {user: user, token: token}})
+//          }
+//        }
+//      }
     },
     beforeDestroy () {
       clearTimeout(this.timer)

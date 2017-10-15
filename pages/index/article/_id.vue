@@ -26,20 +26,21 @@
     },
     computed: {
       article () {
-        if (this.$store.state.article.articleDetail.isSuccess) {
-          return this.$store.state.article.articleDetail.data
-        } else {
-          this.$router.replace({path: '/404'})
-        }
+        return this.$store.state.article.articleDetail.data
+//        if (this.$store.state.article.articleDetail.isSuccess) {
+//          return this.$store.state.article.articleDetail.data
+//        } else {
+//          this.$router.replace({path: '/404'})
+//        }
       }
     },
     watch: {
-      '$route' (to, from) {
-        let paths = to.path.split('/')
-
-        let articleId = paths[paths.length - 1]
-        this.$store.dispatch('loadArticleDetail', {articleId: articleId})
-      }
+//      '$route' (to, from) {
+//        let paths = to.path.split('/')
+//
+//        let articleId = paths[paths.length - 1]
+//        this.$store.dispatch('loadArticleDetail', {articleId: articleId})
+//      }
     },
     methods: {
       chooseTag (tagId) {
@@ -47,11 +48,11 @@
       }
     },
     created () {
-//      let vm = this
-//      let paths = vm.$route.path.split('/')
-//
-//      let articleId = paths[paths.length - 1]
-//      vm.$store.dispatch('loadArticleDetail', {articleId: articleId})
+      let vm = this
+      let paths = vm.$route.path.split('/')
+
+      let articleId = paths[paths.length - 1]
+      vm.$store.dispatch('loadArticleDetail', {articleId: articleId})
     }
   }
 </script>

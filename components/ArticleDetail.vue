@@ -8,7 +8,7 @@
             <img class="icon" src="../assets/icon/homepage.png">
             首页
           </el-breadcrumb-item>
-          <el-breadcrumb-item :to="{ path: '/articles/category/' + article.categoryId}" class="breadcrumb-item">
+          <el-breadcrumb-item :to="{ path: '/articles/category/' + article.articlePreview.category.id}" class="breadcrumb-item">
             {{article.categoryName}}
           </el-breadcrumb-item>
           <el-breadcrumb-item class="breadcrumb-item">
@@ -22,16 +22,16 @@
           {{article.title}}
         </el-row>
         <el-row class="article-info" :gutter="20">
-          <img class="icon" src="../assets/icon/author.png"><div class="author">{{article.author}}</div>
+          <img class="icon" src="../assets/icon/author.png"><div class="author">{{article.articlePreview.user.nickname}}</div>
           <img class="icon" src="../assets/icon/time.png"><div>{{createTimeFormat}}</div>
-          <img class="icon" src="../assets/icon/view.png"><div>{{article.statistics ? article.statistics.viewNum : 0}}</div>
-          <!--<img class="icon" src="../../assets/icon/comment.png"><div>{{article.statistics.commentNum}} 评论</div>-->
+          <img class="icon" src="../assets/icon/view.png"><div>{{article ? article.articlePreview.viewAmount : 0}}</div>
+          <img class="icon" src="../assets/icon/comment.png"><div>{{article ? article.articlePreview.commentAmount : 0}} 评论</div>
         </el-row>
         <el-row :gutter="20" class="tag-list">
           <el-tag class="tag"
                   type="primary"
                   :key="tag.id"
-                  v-for="tag in article.tags"
+                  v-for="tag in article.articlePreview.tags"
                   @click.native="chooseTag(tag.id)">
             {{tag.name}}
           </el-tag>
@@ -46,7 +46,7 @@
 
        <!-- comment -->
       <el-card class="box-card comment-input" :body-style="{padding: '20px'}">
-        <div class="label">评论 (共{{article.statistics.commentNum}}条)</div>
+        <div class="label">评论 (共{{article.articlePreview.commentAmount}}条)</div>
         <el-row>
           <el-col :span="1">
             <img class="avatar" :src="userAvatar">
@@ -64,38 +64,38 @@
         </el-row>
       </el-card>
 
-      <el-card class="box-card comment-list" :body-style="{padding: '20px'}" v-if="article.comments.length > 0">
-        <div class="label">最新评论</div>
-          <hr style="border-color: red;"/>
-            <div v-for="(comment, index) in article.comments">
-            <el-row>
-              <el-col :span="1">
-                <img class="avatar" :src="comment.fromUser.avatar" style="margin-top: 5px">
-              </el-col>
-              <el-col :span="20" :offset="2">
-                <el-row :gutter="10" class="comment-header">
-                  <div style="float: left;color: red;font-size: 18px;cursor: pointer">
-                    {{comment.fromUser.nickname}}
-                  </div>
-                <div style="float: right;color: #bbb">{{ commentTimeFormat(comment.createTime) }}</div>
-              </el-row>
-              <el-row :gutter="20" style="margin-top: 10px;font-size: 16px">
-                <div>{{comment.content}}</div>
-              </el-row>
-              <el-row>
-                <el-col :offset="16" class="comment-footer">
-                  <span>赞同({{comment.approval}})</span>
-                  <span>反对({{comment.against}})</span>
-                  <span>回复</span>
-                  <span v-if="comment.fromUser.id === currentUser.id"
-                    style="color: red" @click="deleteComment(comment.id)">删除</span>
-                  </el-col>
-                </el-row>
-              </el-col>
-            </el-row>
-          <hr/>
-        </div>
-      </el-card>
+      <!--<el-card class="box-card comment-list" :body-style="{padding: '20px'}" v-if="article.comments.length > 0">-->
+        <!--<div class="label">最新评论</div>-->
+          <!--<hr style="border-color: red;"/>-->
+            <!--<div v-for="(comment, index) in article.comments">-->
+            <!--<el-row>-->
+              <!--<el-col :span="1">-->
+                <!--<img class="avatar" :src="comment.fromUser.avatar" style="margin-top: 5px">-->
+              <!--</el-col>-->
+              <!--<el-col :span="20" :offset="2">-->
+                <!--<el-row :gutter="10" class="comment-header">-->
+                  <!--<div style="float: left;color: red;font-size: 18px;cursor: pointer">-->
+                    <!--{{comment.fromUser.nickname}}-->
+                  <!--</div>-->
+                <!--<div style="float: right;color: #bbb">{{ commentTimeFormat(comment.createTime) }}</div>-->
+              <!--</el-row>-->
+              <!--<el-row :gutter="20" style="margin-top: 10px;font-size: 16px">-->
+                <!--<div>{{comment.content}}</div>-->
+              <!--</el-row>-->
+              <!--<el-row>-->
+                <!--<el-col :offset="16" class="comment-footer">-->
+                  <!--<span>赞同({{comment.approval}})</span>-->
+                  <!--<span>反对({{comment.against}})</span>-->
+                  <!--<span>回复</span>-->
+                  <!--<span v-if="comment.fromUser.id === currentUser.id"-->
+                    <!--style="color: red" @click="deleteComment(comment.id)">删除</span>-->
+                  <!--</el-col>-->
+                <!--</el-row>-->
+              <!--</el-col>-->
+            <!--</el-row>-->
+          <!--<hr/>-->
+        <!--</div>-->
+      <!--</el-card>-->
     </el-col>
   </section>
 </template>
@@ -116,9 +116,9 @@
     computed: {
       createTimeFormat () {
         let vm = this
-        if (vm.article.statistics) {
-          return moment(vm.article.statistics.createTime).fromNow() +
-            moment(vm.article.statistics.createTime).format('(YYYY-MM-DD)')
+        if (vm.article) {
+          return moment(vm.article.articlePreview.createTime).fromNow() +
+            moment(vm.article.articlePreview.createTime).format('(YYYY-MM-DD)')
         } else {
           return ''
         }
@@ -135,9 +135,8 @@
         }
       },
       currentUser () {
-        let user = JSON.parse(window.localStorage.getItem('user'))
-        if (user) {
-          return user
+        if (this.canUseDOM()) {
+          return JSON.parse(window.localStorage.getItem('user')) || {}
         } else {
           return {}
         }
@@ -192,7 +191,13 @@
       },
       deleteComment (commentId) {
         console.log('[评论ID]', commentId)
+      },
+      chooseTag (tagId) {
+        this.$router.push({'path': '/articles/tag/' + tagId})
       }
+    },
+    created () {
+//      console.log(this.article)
     }
   }
 </script>

@@ -11,15 +11,7 @@ export const state = () => {
 }
 
 export const mutations = {
-  [types.REQUEST_TAGS] (state) {
-    state.fetching = true
-  },
-  [types.GET_TAGS_FAILURE] (state) {
-    state.fetching = false
-    state.data = []
-  },
-  [types.GET_TAGS_SUCCESS] (state, action) {
-    state.fetching = false
-    state.data = action.tags
+  [types.GET_TAGS] (state, action) {
+    state.data = action
   }
 }

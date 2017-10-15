@@ -88,7 +88,7 @@
     },
     fetch ({ store }) {
       return Promise.all([
-        store.dispatch('loadArticles', {page: 1, limit: store.state.option.articleNumPerPage})
+        store.dispatch('loadArticles', {page: 0, limit: store.state.option.articleNumPerPage})
       ])
     },
     computed: {

@@ -24,8 +24,8 @@ export const actions = {
       // store.dispatch('loadCategories')
       store.dispatch('loadTags'),
       store.dispatch('loadArchives'),
-      store.dispatch('loadHotArticles'),
-      store.dispatch('loadArticles', {page: 1, limit: store.state.option.articleNumPerPage})
+      store.dispatch('loadHotArticles')
+      // store.dispatch('loadArticles', {page: 0, limit: store.state.option.articleNumPerPage})
     ]
     // 如果不是移动端的话，则请求热门文章
     // if (!isMobile) {
@@ -52,70 +52,36 @@ export const actions = {
    * }
    */
 
-  loadArticleDetail ({ commit }, params = {}) {
-    commit(`article/${types.REQUEST_ARTICLE_DETAIL}`)
-    // return axios.get(jsonBase + '/v1/article/' + params.articleId + '.json').then(resp => {
-    return Api.get(`/v1/article/${params.articleId}`).then(resp => {
-      const success = !!resp.status && resp.data && Object.is(resp.data.errcode, 0)
-      if (success) {
-        commit(`article/${types.GET_ARTICLE_DETAIL_SUCCESS}`, resp.data.data)
-      } else {
-        commit(`article/${types.GET_ARTICLE_DETAIL_FAILURE}`)
-      }
-    }, error => {
-      console.log('[ERROR]', error)
-      commit(`article/${types.GET_ARTICLE_DETAIL_FAILURE}`, error)
-    })
+  async loadArticleDetail ({ commit }, params = {}) {
+    let data = await Api.get({url: `/v1/articles/${params.articleId}`, content: null})
+    commit(`article/${types.GET_ARTICLE_DETAIL}`, data)
   },
 
-  loadArticlesByKeyword ({ commit }, params = {}) {
-    commit(`article/${types.REQUEST_ARTICLES}`)
-    return Api.get('/v1/article/search', {params}).then(resp => {
-      const success = !!resp.status && resp.data && Object.is(resp.data.errcode, 0)
-      if (success) {
-        let isFirstPage = params.page && params.page === 1
-        let commitName = `article/${isFirstPage ? 'GET' : 'ADD'}_ARTICLES_SUCCESS`
-        commit(commitName, {data: resp.data.data.articles, page: params.page, totalPage: resp.data.data.totalPage})
-      } else {
-        commit(`article/${types.GET_ARTICLES_FAILURE}`)
-      }
-    }, error => {
-      console.log('[ERROR]', error)
-      commit(`article/${types.GET_ARTICLES_FAILURE}`, error)
-    })
+  async loadArticlesByKeyword ({ commit }, params = {}) {
+    let page = await Api.get({url: '/v1/article/search', content: params})
+    let isFirstPage = params.page === 0 || false
+    let commitName = `article/${isFirstPage ? 'GET' : 'ADD'}_ARTICLES`
+    commit(commitName, {data: page.content, page: params.page, totalPage: page.totalPages})
   },
 
-  loadArticlesByParams ({ commit }, params = {}) {
-    commit(`article/${types.REQUEST_ARTICLES}`)
-    return Api.get('/v1/article', {params}).then(resp => {
-      const success = !!resp.status && resp.data && Object.is(resp.data.errcode, 0)
-      if (success) {
-        let isFirstPage = params.page && params.page === 1
-        let commitName = `article/${isFirstPage ? 'GET' : 'ADD'}_ARTICLES_SUCCESS`
-        commit(commitName, {data: resp.data.data.articles, page: params.page, totalPage: resp.data.data.totalPage})
-      } else {
-        commit(`article/${types.GET_ARTICLES_FAILURE}`)
-      }
-    }, error => {
-      console.log('[ERROR]', error)
-      commit(`article/${types.GET_ARTICLES_FAILURE}`, error)
-    })
+  async loadArticlesByTag ({ commit }, params = {}) {
+    let page = await Api.get({url: `/v1/articles/tag?tagId=${params.tagId}`, content: params, isForm: true})
+    let isFirstPage = params.page === 0 || false
+    let commitName = `article/${isFirstPage ? 'GET' : 'ADD'}_ARTICLES`
+    commit(commitName, {data: page.content, page: params.page, totalPage: page.totalPages})
   },
 
-  loadArticlesByArchive ({ commit }, params = {}) {
-    commit(`article/${types.REQUEST_ARTICLES}`)
-    // return axios.get(jsonBase + '/v1/article/archive/' + params.archive + '.json', {params}).then(resp => {
-    return Api.get(`/v1/article/archive/${params.archive}`, {params}).then(resp => {
-      const success = !!resp.status && resp.data && Object.is(resp.data.errcode, 0)
-      if (success) {
-        commit(`article/${types.GET_ARTICLES_SUCCESS}`, {data: resp.data.data.articles, page: params.page, totalPage: resp.data.data.totalPage})
-      } else {
-        commit(`article/${types.GET_ARTICLES_FAILURE}`)
-      }
-    }, error => {
-      console.log('[ERROR]', error)
-      commit(`article/${types.GET_ARTICLES_FAILURE}`, error)
-    })
+  async loadArticlesByCategory ({ commit }, params = {}) {
+    let page = await Api.get({url: `/v1/articles/category`, content: params, isForm: true})
+    let isFirstPage = params.page === 0 || false
+    let commitName = `article/${isFirstPage ? 'GET' : 'ADD'}_ARTICLES`
+    commit(commitName, {data: page.content, page: params.page, totalPage: page.totalPages})
+  },
+
+  // TODO 归档
+  async loadArticlesByArchive ({ commit }, params = {}) {
+    let page = await Api.get({url: `/v1/articles/archive/${params.archive}`, content: params})
+    commit(`article/${types.GET_ARTICLES}`, {data: page.content, page: params.page, totalPage: page.totalPages})
   },
 
   clearArticles ({ commit }) {
@@ -123,144 +89,110 @@ export const actions = {
   },
 
   // 获取标签
-  loadTags ({ commit }, params = { per_page: 160 }) {
-    commit(`tag/${types.REQUEST_TAGS}`)
-    // return axios.get(jsonBase + '/v1/tag.json').then(resp => {
-    return Api.get('/v1/tag').then(resp => {
-      const success = !!resp.status && resp.data && Object.is(resp.data.errcode, 0)
-      if (success) commit(`tag/${types.GET_TAGS_SUCCESS}`, resp.data.data)
-      if (!success) commit(`tag/${types.GET_TAGS_FAILURE}`)
-    }, error => {
-      console.log(error)
-      commit(`tag/${types.GET_TAGS_FAILURE}`, error)
-    })
+  async loadTags ({ commit }, params = { per_page: 160 }) {
+    let data = await Api.get({url: '/v1/tags', content: null})
+    commit(`tag/${types.GET_TAGS}`, data)
   },
 
-  loadArticles ({ commit }, params = {}) {
-    commit(`article/${types.REQUEST_ARTICLES}`)
-    // return axios.get(jsonBase + '/v1/articles.json').then(resp => {
-    return Api.get('/v1/article', {params}).then(resp => {
-      const success = !!resp.status && resp.data && Object.is(resp.data.errcode, 0)
-      if (success) {
-        let isFirstPage = params.page && params.page === 1
-        let commitName = `article/${isFirstPage ? 'GET' : 'ADD'}_ARTICLES_SUCCESS`
-        commit(commitName, {data: resp.data.data.articles, page: params.page, totalPage: resp.data.data.totalPage})
-      } else {
-        commit(`article/${types.GET_ARTICLES_FAILURE}`)
-      }
-    }, error => {
-      console.log('[ERROR]', error)
-      commit('article/GET_ARTICLES_FAILURE', error)
-    })
+  async loadArticles ({ commit }, params = {page: 0, size: 5}) {
+    let page = await Api.get({url: '/v1/articles', content: params})
+    let isFirstPage = params.page === 0 || false
+    let commitName = `article/${isFirstPage ? 'GET' : 'ADD'}_ARTICLES`
+    commit(commitName, {data: page.content, page: params.page, totalPage: page.totalPages})
   },
 
   // 获取归档时间
-  loadArchives ({ commit }) {
-    commit(`archive/${types.REQUEST_ARCHIVES}`)
-    // return axios.get(jsonBase + '/v1/article/archive.json').then(resp => {
-    return Api.get('/v1/article/archive').then(resp => {
-      const success = !!resp.status && resp.data && Object.is(resp.data.errcode, 0)
-      if (success) commit(`archive/${types.GET_ARCHIVES_SUCCESS}`, resp.data.data)
-      else commit(`archive/${types.GET_ARCHIVES_FAILURE}`)
-    }, error => {
-      console.log(error)
-      commit(`archive/${types.GET_ARCHIVES_FAILURE}`, error)
-    })
+  // TODO 归档
+  async loadArchives ({ commit }) {
+    let data = await Api.get({url: '/v1/articles/archive', content: null})
+    commit(`archive/${types.GET_ARCHIVES}`, data)
   },
 
   // 获取热门文章
-  loadHotArticles ({ commit }) {
-    commit(`article/${types.REQUEST_HOT_ARTICLES}`)
+  async loadHotArticles ({ commit }) {
     // return axios.get(jsonBase + '/v1/article/hot.json').then(resp => {
-    return Api.get('/v1/article/hot').then(resp => {
-      const success = !!resp.status && resp.data && Object.is(resp.data.errcode, 0)
-      if (success) commit(`article/${types.GET_HOT_ARTICLES_SUCCESS}`, resp.data.data)
-      else commit(`article/${types.GET_HOT_ARTICLES_FAILURE}`)
-    }, error => {
-      console.log(error)
-      commit(`article/${types.GET_HOT_ARTICLES_FAILURE}`, error)
-    })
+    let data = await Api.get({url: '/v1/articles/hot', content: null})
+    commit(`article/${types.GET_HOT_ARTICLES}`, data)
   },
 
-  loadGithubUser ({ commit }) {
-    commit(`github/${types.REQUEST_GITHUB_DATA}`)
-    return axios.get('https://api.github.com/users/oahnus').then(resp => {
-      commit(`github/${types.GET_USER_SUCCESS}`, resp.data)
-    }, () => {
-      commit(`github/${types.GET_USER_FAILURE}`)
-    })
+  async loadGithubUser ({ commit }) {
+    let resp = await axios.get('https://api.github.com/users/oahnus')
+    commit(`github/${types.GET_USER}`, resp.data)
   },
 
-  loadGithubRepositories ({ commit }) {
-    commit(`github/${types.REQUEST_GITHUB_DATA}`)
-    return axios.get('https://api.github.com/users/oahnus/repos').then(resp => {
-      commit(`github/${types.GET_REPOSITORIES_SUCCESS}`, resp.data)
-    }, () => {
-      commit(`github/${types.GET_REPOSITORIES_FAILURE}`)
-    })
+  async loadGithubRepositories ({ commit }) {
+    let resp = await axios.get('https://api.github.com/users/oahnus/repos')
+    commit(`github/${types.GET_REPOSITORIES}`, resp.data)
   },
 
-  loadHitokoto ({ commit }) {
-    commit(`hitokoto/${types.REQUEST_HITOKOTO}`)
-    return axios.get(`http://api.hitokoto.cn/?encode=json`).then(resp => {
-      commit(`hitokoto/${types.REQUEST_HITOKOTO_SUCCESS}`, resp.data)
-    }, () => {
-      commit(`hitokoto/${types.REQUEST_HITOKOTO_FAILURE}`)
-    })
-  },
-
-  submitComment ({ commit }, form = {}) {
-    return new Promise((resolve, reject) => {
-      return Api.post('/v1/comment', form).then(resp => {
-        const success = !!resp.status && resp.data && Object.is(resp.data.errcode, 0)
-        if (success) {
-          resolve(resp.data)
-        } else {
-          reject(resp.data.msg)
-        }
-      }, (error) => {
-        reject(error)
-      })
-    })
-  },
-
-  userLogin ({ commit }, user = {}) {
-    commit(`auth/${types.REQUEST_AUTH}`)
-    return new Promise((resolve, reject) => {
-      return Api.post('/v1/auth/login', user).then(resp => {
-        console.log(resp)
-        const success = !!resp.status && resp.data && Object.is(resp.data.errcode, 0)
-        if (success) {
-          commit(`auth/${types.USER_LOGIN_SUCCESS}`, resp.data)
-          resolve()
-        } else {
-          commit(`auth/${types.USER_LOGIN_FAILURE}`)
-          reject(resp.data.msg)
-        }
-      }, (error) => {
-        commit(`auth/${types.USER_LOGIN_FAILURE}`)
-        reject(error)
-      })
-    })
-  },
-
-  loadUserFromStorage ({ commit }, params = {}) {
-    commit(`auth/${types.USER_LOGIN_SUCCESS}`, params)
-  },
-
-  userLogout ({ commit }) {
-    commit(`auth/${types.USER_LOGOUT}`)
-    window.localStorage.clear()
-  },
-
-  userRegister ({ commit }, user = {}) {
-    commit(`auth/${types.REQUEST_AUTH}`)
-    return Api.post('/v1/auth/register', {user}).then(resp => {
-      const success = !!resp.status && resp.data && Object.is(resp.data.errcode, 0)
-      if (success) commit(`user/${types.USER_LOGIN_SUCCESS}`, resp.data)
-      else commit(`auth/${types.USER_LOGIN_FAILURE}`)
-    }, () => {
-      commit(`auth/${types.USER_LOGIN_FAILURE}`)
-    })
+  async loadHitokoto ({ commit }) {
+    let resp = await axios.get(`http://api.hitokoto.cn/?encode=json`)
+    commit(`hitokoto/${types.GET_HITOKOTO}`, resp.data)
   }
+  //
+  // submitComment ({ commit }, form = {}) {
+  //   return new Promise((resolve, reject) => {
+  //     return Api.post('/v1/comment', form).then(resp => {
+  //       const success = !!resp.status && resp.data && Object.is(resp.data.errcode, 0)
+  //       if (success) {
+  //         resolve(resp.data)
+  //       } else {
+  //         reject(resp.data.msg)
+  //       }
+  //     }, (error) => {
+  //       reject(error)
+  //     })
+  //   })
+  // },
+  //
+  // userLogin ({ commit }, user = {}) {
+  //   commit(`auth/${types.REQUEST_AUTH}`)
+  //   return new Promise((resolve, reject) => {
+  //     return axios.post('http://localhost:10706/blog/v1/auth/login', user).then(resp => {
+  //       console.log(resp)
+  //       const success = !!resp.status && resp.data && Object.is(resp.data.errcode, 0)
+  //       if (success) {
+  //         commit(`auth/${types.USER_LOGIN_SUCCESS}`, resp.data)
+  //         resolve()
+  //       } else {
+  //         commit(`auth/${types.USER_LOGIN_FAILURE}`)
+  //         reject(resp.data.msg)
+  //       }
+  //     }, (error) => {
+  //       commit(`auth/${types.USER_LOGIN_FAILURE}`)
+  //       reject(error)
+  //     })
+  //   })
+  // },
+  //
+  // loadUserFromStorage ({ commit }, params = {}) {
+  //   let user = JSON.parse(window.localStorage.getItem('user'))
+  //   let token = JSON.parse(window.localStorage.getItem('token'))
+  //   console.log(token)
+  //   console.log(user)
+  //   if (!user && !token) {
+  //     let time = new Date(window.localStorage.getItem('time'))
+  //     if (new Date().getTime() - time.getTime() > 86400000) {
+  //       commit(`auth/${types.USER_LOGIN_FAILURE}`)
+  //     } else {
+  //       commit(`auth/${types.USER_LOGIN_SUCCESS}`, {data: {user: user, token: token}})
+  //     }
+  //   }
+  // },
+  //
+  // userLogout ({ commit }) {
+  //   commit(`auth/${types.USER_LOGOUT}`)
+  //   window.localStorage.clear()
+  // },
+  //
+  // userRegister ({ commit }, user = {}) {
+  //   commit(`auth/${types.REQUEST_AUTH}`)
+  //   return Api.post('/v1/auth/register', {user}).then(resp => {
+  //     const success = !!resp.status && resp.data && Object.is(resp.data.errcode, 0)
+  //     if (success) commit(`user/${types.USER_LOGIN_SUCCESS}`, resp.data)
+  //     else commit(`auth/${types.USER_LOGIN_FAILURE}`)
+  //   }, () => {
+  //     commit(`auth/${types.USER_LOGIN_FAILURE}`)
+  //   })
+  // }
 }

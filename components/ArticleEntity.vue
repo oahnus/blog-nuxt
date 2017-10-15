@@ -4,7 +4,7 @@
       <el-row>
         <el-col :span="6">
           <img class="icon" src="../assets/icon/catrgoty.png">
-          <span class="category" @click="getArticleByCategory">&nbsp;{{ article.categoryName}}&nbsp;</span>
+          <span class="category" @click="getArticleByCategory">&nbsp;{{ article.category.name}}&nbsp;</span>
         </el-col>
         <el-col :span="18">
           <div class="title" @click="gotoArticleContent">{{ article.title }}</div>
@@ -23,10 +23,10 @@
       <el-row>
         <el-col :offset="13">
           <div class="statistics">
-            <img class="icon" src="../assets/icon/author.png"><div class="author">{{article.author}}</div>
+            <img class="icon" src="../assets/icon/author.png"><div class="author">{{article.user.nickname}}</div>
             <img class="icon" src="../assets/icon/time.png"><div>{{createTime}}</div>
-            <img class="icon" src="../assets/icon/view.png"><div>{{article.statistics.viewNum}}</div>
-            <img class="icon" src="../assets/icon/comment.png"><div>{{article.statistics.commentNum}} 评论</div>
+            <img class="icon" src="../assets/icon/view.png"><div>{{article.viewAmount}}</div>
+            <img class="icon" src="../assets/icon/comment.png"><div>{{article.commentAmount}} 评论</div>
           </div>
         </el-col>
       </el-row>
@@ -44,8 +44,7 @@
     },
     computed: {
       createTime () {
-        let vm = this
-        return moment(vm.article.statistics.createTime).fromNow()
+        return moment(this.article.createTime).fromNow()
       }
     },
     props: {
@@ -58,7 +57,7 @@
       },
       getArticleByCategory () {
         let vm = this
-        let categoryId = vm.article.categoryId
+        let categoryId = vm.article.category.id
         vm.$router.push({path: '/articles/category/' + categoryId})
       }
     },

@@ -17,7 +17,8 @@
     "lodash": "4.17.4",
     "moment": "^2.18.1",
     "nuxt": "latest",
-    "vue": "latest"
+    "vue": "2.4.4",
+    "qs": "latest"
   },
   "scripts": {
     "dev": "nuxt",
@@ -37,6 +38,7 @@
     "eslint-loader": "^1.6.1",
     "eslint-plugin-html": "^2.0.0",
     "eslint-plugin-promise": "^3.4.1",
-    "eslint-plugin-standard": "^2.0.1"
+    "eslint-plugin-standard": "^2.0.1",
+    "vue-template-compiler": "2.4.4"
   }
 }

@@ -31,7 +31,7 @@ module.exports = {
   //   baseUrl: 'http://localhost:10706/blog'
   // },
   plugins: [
-    { src: '~plugins/ElementUI.js', ssr: true},
+    { src: '~plugins/ElementUI.js'}, // ssr 默认true, 值为false,文件只会在客户端被打包引入
     { src: '~plugins/moment.js', ssr: false}
     // { src: '~plugins/Http.js', ssr: false},
   ],
