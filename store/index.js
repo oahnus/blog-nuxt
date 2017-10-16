@@ -102,7 +102,6 @@ export const actions = {
   },
 
   // 获取归档时间
-  // TODO 归档
   async loadArchives ({ commit }) {
     let data = await Api.get({url: '/v1/articles/archive', content: null})
     commit(`archive/${types.GET_ARCHIVES}`, data)

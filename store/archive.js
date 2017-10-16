@@ -11,7 +11,6 @@ export const state = () => {
 
 export const mutations = {
   [types.GET_ARCHIVES] (state, action) {
-    state.fetching = false
     state.data = action
   }
 }
