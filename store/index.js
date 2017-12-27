@@ -58,7 +58,7 @@ export const actions = {
   },
 
   async loadArticlesByKeyword ({ commit }, params = {}) {
-    let page = await Api.get({url: '/v1/article/search', content: params})
+    let page = await Api.get({url: '/v1/articles/keyword', content: params})
     let isFirstPage = params.page === 0 || false
     let commitName = `article/${isFirstPage ? 'GET' : 'ADD'}_ARTICLES`
     commit(commitName, {data: page.content, page: params.page, totalPage: page.totalPages})
