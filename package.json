@@ -16,8 +16,8 @@
     "html-entities": "^1.2.1",
     "lodash": "4.17.4",
     "moment": "^2.18.1",
-    "nuxt": "latest",
-    "vue": "2.5.13",
+    "nuxt": "1.0.0-rc11",
+    "vue": "2.4.4",
     "qs": "latest"
   },
   "scripts": {
@@ -40,6 +40,6 @@
     "eslint-plugin-html": "^2.0.0",
     "eslint-plugin-promise": "^3.4.1",
     "eslint-plugin-standard": "^2.0.1",
-    "vue-template-compiler": "2.5.13"
+    "vue-template-compiler": "2.4.4"
   }
 }
