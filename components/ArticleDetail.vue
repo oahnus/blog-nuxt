@@ -1,3 +1,93 @@
+<style scoped>
+  .comment-header {
+
+  }
+  .comment-footer {
+    margin-top: 10px;
+  }
+  .comment-footer span {
+    font-size: 14px;
+    color: #999;
+    margin-right: 5px;
+    cursor: pointer;
+  }
+  .comment-input {
+    margin-top: 10px;
+  }
+  .comment-input .label{
+    margin-bottom: 10px;
+    font-size: 20px;
+    margin-left: 20px;
+  }
+  .comment-input .el-input,.el-button {
+    height: 42px;
+  }
+  .comment-input .avatar {
+    width: 42px;
+    height: 42px;
+    border: 1px solid #bbb;
+    margin-left: 20px;
+    /*border-radius: 10px;*/
+    cursor: pointer;
+  }
+  .comment-list {
+  }
+  .comment-list .avatar {
+    width: 42px;
+    height: 42px;
+    border: 1px solid #bbb;
+    margin-left: 20px;
+    cursor: pointer;
+  }
+  .comment-list .label {
+    font-size: 20px;
+    margin-left: 20px;
+    margin-bottom: 10px;
+  }
+  .back-top {
+    height: 60px;
+    width: 60px;
+    border-radius: 4px;
+    background-color: #fff;
+    color: #0077db;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    float: right;
+    margin-top: -65px;
+    margin-right: -65px;
+    z-index: 100;
+    cursor: pointer;
+  }
+  .icon {
+    width: 20px;
+    height: 20px;
+    vertical-align: middle;
+    margin-right: 1px;
+  }
+  .breadcrumb-item {
+    /*display: inline;*/
+    vertical-align: middle;
+  }
+  .article-info div{
+    margin-right: 25px;
+    display: inline;
+  }
+  .article-info {
+    margin-top: 10px;
+  }
+  .article-title {
+    font-size: 25px;
+  }
+  .tag {
+    margin-right: 10px;
+    cursor: pointer;
+  }
+  .tag-list {
+    margin-top: 10px;
+  }
+</style>
+
 <template>
   <section>
     <el-col>
@@ -9,10 +99,10 @@
             首页
           </el-breadcrumb-item>
           <el-breadcrumb-item :to="{ path: '/articles/category/' + article.articlePreview.category.id}" class="breadcrumb-item">
-            {{article.categoryName}}
+            {{article.articlePreview.category.name}}
           </el-breadcrumb-item>
           <el-breadcrumb-item class="breadcrumb-item">
-            {{article.title}}
+            {{article.articlePreview.title}}
           </el-breadcrumb-item>
         </el-breadcrumb>
       </el-card>
@@ -42,27 +132,27 @@
         <a :id="'top'"></a>
         <div v-html="article.content" class="markdown-body"></div>
       </el-card>
-      <div class="back-top"><a :href="'#top'" style="text-decoration: none">Top</a></div>
+      <div class="back-top" v-if="!isTop" @click="handleScrollToTop">Top</div>
 
        <!-- comment -->
-      <el-card class="box-card comment-input" :body-style="{padding: '20px'}">
-        <div class="label">评论 (共{{article.articlePreview.commentAmount}}条)</div>
-        <el-row>
-          <el-col :span="1">
-            <img class="avatar" :src="userAvatar">
-          </el-col>
-          <el-col :span="16" :offset="2">
-            <el-input
-              size="large"
-              placeholder="请输入内容"
-              v-model="comment">
-            </el-input>
-          </el-col>
-          <el-col :span="4">
-            <el-button type="primary" size="large" @click="commitComment">提  交</el-button>
-          </el-col>
-        </el-row>
-      </el-card>
+      <!--<el-card class="box-card comment-input" :body-style="{padding: '20px'}">-->
+        <!--<div class="label">评论 (共{{article.articlePreview.commentAmount}}条)</div>-->
+        <!--<el-row>-->
+          <!--<el-col :span="1">-->
+            <!--<img class="avatar" :src="userAvatar">-->
+          <!--</el-col>-->
+          <!--<el-col :span="16" :offset="2">-->
+            <!--<el-input-->
+              <!--size="large"-->
+              <!--placeholder="请输入内容"-->
+              <!--v-model="comment">-->
+            <!--</el-input>-->
+          <!--</el-col>-->
+          <!--<el-col :span="4">-->
+            <!--<el-button type="primary" size="large" @click="commitComment">提  交</el-button>-->
+          <!--</el-col>-->
+        <!--</el-row>-->
+      <!--</el-card>-->
 
       <!--<el-card class="box-card comment-list" :body-style="{padding: '20px'}" v-if="article.comments.length > 0">-->
         <!--<div class="label">最新评论</div>-->
@@ -107,13 +197,21 @@
   export default {
     data () {
       return {
-        comment: ''
+        comment: '',
+        isTop: true,
+        toTop: 0,
+        winHeight: 0
       }
     },
     props: {
       article: {}
     },
     computed: {
+      showBackTop () {
+        console.log(this.document.height)
+        console.log(this)
+        return true
+      },
       createTimeFormat () {
         let vm = this
         if (vm.article) {
@@ -194,98 +292,28 @@
       },
       chooseTag (tagId) {
         this.$router.push({'path': '/articles/tag/' + tagId})
-      }
+      },
+      handleScroll () {
+        this.toTop = document.body.scrollTop || document.documentElement.scrollTop
+        this.isTop = this.toTop < this.winHeight
+      },
+      handleScrollToTop () {
+        let vm = this
+        let timer = setInterval(function () {
+          let speed = Math.ceil(vm.toTop / 15)
+          document.documentElement.scrollTop = document.body.scrollTop = vm.toTop - speed
+          if (vm.toTop === 0) {
+            clearInterval(timer)
+          }
+        }, 10)
+      },
     },
     created () {
-//      console.log(this.article)
+      console.log(this.article)
+    },
+    mounted() {
+      this.winHeight = document.documentElement.clientHeight
+      window.addEventListener('scroll', this.handleScroll)
     }
   }
 </script>
-
-<style scoped>
-  .comment-header {
-
-  }
-  .comment-footer {
-    margin-top: 10px;
-  }
-  .comment-footer span {
-    font-size: 14px;
-    color: #999;
-    margin-right: 5px;
-    cursor: pointer;
-  }
-  .comment-input {
-    margin-top: 10px;
-  }
-  .comment-input .label{
-    margin-bottom: 10px;
-    font-size: 20px;
-    margin-left: 20px;
-  }
-  .comment-input .el-input,.el-button {
-    height: 42px;
-  }
-  .comment-input .avatar {
-    width: 42px;
-    height: 42px;
-    border: 1px solid #bbb;
-    margin-left: 20px;
-    /*border-radius: 10px;*/
-    cursor: pointer;
-  }
-  .comment-list {
-  }
-  .comment-list .avatar {
-    width: 42px;
-    height: 42px;
-    border: 1px solid #bbb;
-    margin-left: 20px;
-    cursor: pointer;
-  }
-  .comment-list .label {
-    font-size: 20px;
-    margin-left: 20px;
-    margin-bottom: 10px;
-  }
-  .back-top {
-    height: 40px;
-    width: 40px;
-    line-height: 40px;
-    border-radius: 4px;
-    background-color: #1088e9;
-    color: #fff;
-    text-align: center;
-    float: right;
-    margin-top: -45px;
-    margin-right: -45px;
-    z-index: 10;
-  }
-  .icon {
-    width: 20px;
-    height: 20px;
-    vertical-align: middle;
-    margin-right: 1px;
-  }
-  .breadcrumb-item {
-    /*display: inline;*/
-    vertical-align: middle;
-  }
-  .article-info div{
-    margin-right: 25px;
-    display: inline;
-  }
-  .article-info {
-    margin-top: 10px;
-  }
-  .article-title {
-    font-size: 25px;
-  }
-  .tag {
-    margin-right: 10px;
-    cursor: pointer;
-  }
-  .tag-list {
-    margin-top: 10px;
-  }
-</style>

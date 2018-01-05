@@ -140,12 +140,12 @@
   .repository-card {
     border: 1px solid #eee;
     height: 250px;
-    background: #eee;
+    background: #66ccff;
     cursor: pointer;
-    box-shadow: 1px 1px 5px #888888;
+    box-shadow: 1px 1px 5px #66ccff;
   }
   .repository-card:hover {
-    background: #ccc;
+    background: #336699;
   }
 
   .repository-card .lang-img {

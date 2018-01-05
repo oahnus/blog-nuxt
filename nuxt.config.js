@@ -1,4 +1,5 @@
 let apiConfig = require('./api.config')
+let webpack = require('webpack')
 
 module.exports = {
   /*
@@ -61,6 +62,11 @@ module.exports = {
         })
       }
     },
+    plugins: [
+      new webpack.ProvidePlugin({
+        '_': 'lodash'
+      })
+    ],
     vendor: [
       'axios',
       'element-ui'

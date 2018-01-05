@@ -3,12 +3,12 @@
     <div class="container">
       <div class="footer-content">
         <!--<a class="sitemap-btn" href="/sitemap.xml" target="_blank">SITEMAP</a>-->
-        <a href="https://github.com/oahnus/blog-nuxt">GitHub</a>
+        <a href="https://github.com/oahnus/blog-nuxt" target="_blank">GitHub</a>
         <span> - </span>
         <span>Powered By </span>
-        <a href="https://vuejs.org/">Vue.js</a>
+        <a href="https://vuejs.org/" target="_blank">Vue.js</a>
         <span>、</span>
-        <a href="https://nuxtjs.org">Nuxt.js</a>
+        <a href="https://nuxtjs.org" target="_blank">Nuxt.js</a>
         <span> and solitude. Dsigned By </span>
         <router-link to="/about">Oahnus</router-link>
       </div>

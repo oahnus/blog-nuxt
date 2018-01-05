@@ -5,7 +5,7 @@
           <el-menu-item index="oahnus">Oahnus</el-menu-item>
           <el-menu-item index="home">首页</el-menu-item>
           <el-menu-item index="tech">技术</el-menu-item>
-          <!--<el-menu-item index="">随笔</el-menu-item>-->
+          <el-menu-item index="shiyi">拾遗</el-menu-item>
           <!--<el-menu-item index="">杂记</el-menu-item>-->
           <el-menu-item index="about">关于</el-menu-item>
           <el-menu-item index="" style="float: right;">
@@ -41,6 +41,9 @@
             break
           case 'tech':
             vm.$router.push({path: '/articles/category/1'})
+            break
+          case 'shiyi':
+            vm.$router.push({path: '/shiyi'})
             break
           case 'about':
             vm.$router.push({path: '/about'})

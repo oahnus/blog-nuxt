@@ -99,7 +99,7 @@ export default {
     let method = 'get'
     return handleAjax({url, method, content, hasError, isForm})
   },
-  delete ({url, content, hasError, isForm}) {
+  del ({url, content, hasError, isForm}) {
     let method = 'delete'
     return handleAjax({url, method, content, hasError, isForm})
   },
